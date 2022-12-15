@@ -1,12 +1,15 @@
 export class Employee {
 
-  public empId:number;
-  public empName:string;
-  public empSalary:number;
+  public id:number;
+  public name:string;
+  public salary:number;
+  public imagepath:string;
+  public skillset: string[];
 
-  public constructor(empId:number, empName:string, empSalary:number) {
-    this.empId = empId;
-    this.empName = empName;
-    this.empSalary = empSalary;
+  public constructor(name:string, salary:number, imagepath:string, skillset:string[] = []) {
+    this.name = name;
+    this.salary = salary;
+    this.imagepath = imagepath;
+    this.skillset = skillset;
   }
 }

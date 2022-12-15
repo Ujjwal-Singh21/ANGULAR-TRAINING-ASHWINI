@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { Employee } from 'src/Shared/employee.model';
-import { Product } from 'src/Shared/product.model';
+import { Employee } from 'src/shared/employee.model';
+import { Product } from 'src/shared/product.model';
 
 @Component({
   selector: 'app-test1',
@@ -10,9 +10,8 @@ import { Product } from 'src/Shared/product.model';
 export class Test1Component implements OnInit {
 
   companyName:string = 'Capgemini'
-  product = new Product(101, 'Sample Product')
-  employee1 = new Employee(9000, 'Ujjwal', 15000)
-
+  companyLocation:string = 'Chennai - Prestige Cyber Towers'
+  
   constructor() { }
 
   ngOnInit(): void {

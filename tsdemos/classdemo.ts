@@ -14,4 +14,14 @@ export class Product {
   getDiscountedPrice () {
     return this.price - this.price * 0.1
   }
+
+  showProductDetails() {
+    return 'productId: ' + this.pid + ' productName: ' + this.pname + ' price: ' + this.price; 
+  }
 }
+
+
+var obj = new Product(101, 'Mobile', 4500);
+
+console.log(obj.getDiscountedPrice())
+console.log(obj.showProductDetails())

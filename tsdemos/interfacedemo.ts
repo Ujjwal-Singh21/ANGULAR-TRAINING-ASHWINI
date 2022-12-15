@@ -10,11 +10,11 @@ class VideoChannel implements INotification {
   }
 
   SMSNotify (): void {
-    console.log('VideoAdded-SMS sent')
+    console.log('VideoAdded - SMS sent')
   }
   
   EmailNotify (): void {
-    console.log('VideoAdded- email sent')
+    console.log('VideoAdded - email sent')
   }
 }
 

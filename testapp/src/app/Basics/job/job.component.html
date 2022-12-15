@@ -1,0 +1,34 @@
+<div class="container-sm">
+  <div class="row">
+    <div class="col-lg-8">
+      <div class="shadow-lg -3 mb-5 bg-white rounded">
+        
+        <div *ngIf="jobsArr.length == 0; else Jobs">
+          <p>No Jobs</p>
+        </div>
+
+        <ng-template #Jobs >
+          
+          <strong> Jobs in Pune </strong>
+          
+          <div *ngFor = "let job of jobsArr">
+
+            <div *ngIf = "job.location == 'Pune' ">
+
+              <ul class="list-group list-group-flush">
+                 <li class="list-group-item">
+                  {{ job.title }} -
+                  {{ job.description }} -
+                  {{ job.location }}
+                 </li>
+              </ul>
+            </div>
+
+          </div>
+
+        </ng-template>
+
+      </div>
+    </div>
+  </div>
+</div>
