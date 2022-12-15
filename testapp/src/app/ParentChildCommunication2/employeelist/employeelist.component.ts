@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { Employee } from 'src/shared/employee.model';
 
 @Component({
@@ -8,7 +8,9 @@ import { Employee } from 'src/shared/employee.model';
 })
 export class EmployeelistComponent implements OnInit {
 
-  employeeList: Employee[] = [
+ @Input() employeeList: Employee[] = [];
+
+  /* = [
     new Employee(
       'Steve',
       4500,
@@ -36,7 +38,7 @@ export class EmployeelistComponent implements OnInit {
       'https://safetyculture.com/wp-content/media/2022/09/lone-worker-alarm-featured.jpg',
       ['Java', 'Hibernate', 'SpringBoot']
     )
-  ]
+  ] */
 
   constructor() { }
 

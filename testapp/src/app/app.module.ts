@@ -14,6 +14,7 @@ import { EmployeelistComponent } from './ParentChildCommunication2/employeelist/
 import { EmployeeitemComponent } from './ParentChildCommunication2/employeeitem/employeeitem.component';
 import { FormsModule } from '@angular/forms';
 import { ProductcreateComponent } from './ParentChildCommunication/productcreate/productcreate.component';
+import { EmployeecreateComponent } from './ParentChildCommunication2/employeecreate/employeecreate.component';
 
 @NgModule({
   declarations: [
@@ -25,7 +26,8 @@ import { ProductcreateComponent } from './ParentChildCommunication/productcreate
     EmployeeComponent,
     EmployeelistComponent,
     EmployeeitemComponent,
-    ProductcreateComponent
+    ProductcreateComponent,
+    EmployeecreateComponent,
   ],
   imports: [
     BrowserModule,

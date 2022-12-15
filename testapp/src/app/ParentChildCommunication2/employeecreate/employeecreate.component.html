@@ -1,0 +1,28 @@
+<div class="container">
+  <div class="row">
+
+    <div class="mb-3">
+      <label for="name" class="form-label"> Name </label>
+      <input type="text" class="form-control" [(ngModel)] = 'name'>
+    </div>
+
+    <div class="mb-3">
+      <label for="salary" class="form-label"> Salary </label>
+      <input type="text" class="form-control" [(ngModel)] = 'salary'>
+    </div>
+
+    <div class="mb-3">
+      <label for="imagepath" class="form-label"> Imagepath </label>
+      <input type="text" class="form-control" [(ngModel)] = 'imagepath'>
+    </div>
+
+    <!-- <div class="mb-3">
+      <label for="skillset" class="form-label"> Skillset </label>
+      <input type="text" class="form-control" [(ngModel)] = 'skillset'>
+    </div> -->
+
+    <button class="btn btn-info mb-3" (click) = 'addEmployee()'> Add employee </button>
+
+  </div>
+</div>
+
