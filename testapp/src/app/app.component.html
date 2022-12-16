@@ -9,4 +9,8 @@
 
 <!-- parent-child-communication(property-binding) -->
 <!-- <app-product></app-product> -->
-<app-employee></app-employee>
+<!-- <app-employee></app-employee> -->
+
+<!-- Register-Detail-Task  -->
+<app-register (registerForm) = 'onUserAdd($event)'></app-register>
+<app-detail [userDetailsArr] = 'storeUsers'></app-detail>

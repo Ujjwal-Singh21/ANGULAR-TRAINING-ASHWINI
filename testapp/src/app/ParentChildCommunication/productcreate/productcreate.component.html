@@ -1,27 +1,36 @@
 <div class="container">
   <div class="row">
 
-    <div class="mb-3">
-      <label for="title" class="form-label">Title</label>
-      <input type="text" class="form-control" [(ngModel)]="title" />
-    </div>
-
-    <div class="mb-3">
-      <label for="description" class="form-label">Description</label>
-      <input type="text" class="form-control" [(ngModel)]="description" />
-    </div>
-
-    <div class="mb-3">
-      <label for="imagepath" class="form-label">ImageUrl</label>
-      <input type="text" class="form-control" [(ngModel)]="imagepath" />
-    </div>
-
-    <div class="mb-3">
-      <label for="quantity" class="form-label">Quantity</label>
-      <input type="number" class="form-control" [(ngModel)]="quantity" />
-    </div>
-
-    <button class="btn btn-primary mb-3" (click)="onAddNewProduct()"> Add New Product </button>
-
+    <form #productForm = 'ngForm' (ngSubmit) = 'onAddNewProduct(productForm)'>
+      <div class="mb-3">
+        <label for="title" class="form-label">Title</label>
+        <input type="text" class="form-control" ngModel name ="title"
+        #title = 'ngModel' required />
+        <div *ngIf = 'title.touched && title.invalid'> Title is required </div>
+      </div>
+  
+      <div class="mb-3">
+        <label for="description" class="form-label">Description</label>
+        <input type="text" class="form-control" ngModel name ="description" 
+        #description='ngModel' required/>
+        <div *ngIf = 'description.touched && description.invalid'> Description is required </div>
+      </div>
+  
+      <div class="mb-3">
+        <label for="imagepath" class="form-label">ImagePath</label>
+        <input type="text" class="form-control" ngModel name ="imagepath"
+        #imagepath = 'ngModel' required />
+        <div *ngIf = 'imagepath.touched && imagepath.invalid'> ImagePath is required </div>
+      </div>
+  
+      <div class="mb-3">
+        <label for="quantity" class="form-label">Quantity</label>
+        <input type="number" class="form-control" ngModel name ="quantity"
+        #quantity = 'ngModel' required />
+        <div *ngIf = 'quantity.touched && quantity.invalid'> Quantity is required </div>
+      </div>
+  
+      <button class="btn btn-primary mb-3" [disabled] = 'productForm.form.invalid'> Add New Product </button>
+    </form>
   </div>
 </div>

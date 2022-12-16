@@ -15,6 +15,8 @@ import { EmployeeitemComponent } from './ParentChildCommunication2/employeeitem/
 import { FormsModule } from '@angular/forms';
 import { ProductcreateComponent } from './ParentChildCommunication/productcreate/productcreate.component';
 import { EmployeecreateComponent } from './ParentChildCommunication2/employeecreate/employeecreate.component';
+import { RegisterComponent } from './RegisterDetailTask/register/register.component';
+import { DetailComponent } from './RegisterDetailTask/detail/detail.component';
 
 @NgModule({
   declarations: [
@@ -28,6 +30,8 @@ import { EmployeecreateComponent } from './ParentChildCommunication2/employeecre
     EmployeeitemComponent,
     ProductcreateComponent,
     EmployeecreateComponent,
+    RegisterComponent,
+    DetailComponent,
   ],
   imports: [
     BrowserModule,

@@ -435,3 +435,204 @@ ProductList.component.ts:
 - Now the data is finally present in our required component ts file inside productList[] array;
 
 - Hence we simply make use of it in ProductList html file and render the desired output.
+
+
+
+Approaches of creating forms in Angular:
+========================================
+
+- In Angular there are 2 approaches to design interactive forms.
+
+  1) Template Driven Approach
+  2) Reactive Approach
+
+1) Template Driven approach:
+----------------------------
+
+- Template driven apparoach can be used to create any type of forms
+
+- The UI logic/design i.e) binding the elements to data properties, validation, styling etc is controlled through template.
+
+- Import and register FormsModules in app.module.ts from @angular/forms.
+
+- This FormsModules will provide some important directives to be used in Template-driven-form.
+
+- ngModel -> It is used for 2 way binding.
+          -> Bind it to some property of component, it also allow us to check the validity of user input and handle the
+             errors.
+
+- ngForm -> Create the Top Level instance of the FormGroup and it is bound to <form> element.
+         -> It aggregates or collects the input elements into the single formgroup instance.
+
+
+- ngSubmit -> used on <form> tag to handle form submit event.
+
+
+CSS class used in template driven form for checking the validation:
+===================================================================
+
+- touched : true if the element was visited by user
+
+- untouched : true if the element was not visited by user
+
+- dirty : true if the element's content was changed
+
+- pristine : true if the element's content was not changed
+
+- valid : true if contents are valid
+
+- Invalid : true if contents are invalid.
+
+
+Changes we are going to do in ProductCreate.component.html file's form to make it template driven form:
+=======================================================================================================
+
+- Wrap all div and button tag inside a <form> tag.
+
+- Create the Top Level instance of the FormGroup using ngForm directive and assign it to a reference variable.
+  
+  eg: #productForm="ngForm"
+
+- It aggregates/collects the input elements into the single formgroup instance.
+
+- Remove all properties/variables that were declared inside ProductCreare .ts file, because in realtime if we have 100
+  properties, we cannot keep declaring them using 100 variables manually, hence it is internally taken care by FormGroup
+  instance created above at <form> tag.
+
+- Move the submit handler to <form> tag from <button> tag and make use of ngSubmit directive.
+
+- Pass the FormGroup instance to handler method while invoking it using FormGroup reference variable.
+
+   eg: (ngSubmit)="onAddNewProduct(productForm)
+
+- we make some changes in ts file's submit handler method.
+
+- We recieve FormGroup instance named productForm of type NgForm.
+
+- We change this.title --  productForm.value.title
+            this.description -- productForm.value.description etc.
+
+- eg: onAddNewProduct(productForm:NgForm)
+       {
+           let newproduct=new Product(productForm.value.title,productForm.value.description,
+           productForm.value.imagepath,productForm.value.quantity);
+           this.addproductevent.emit(newproduct);
+       }
+
+- Earlier on <input/> tag ngModel directive was used to bind with all properties like this : [(ngModel)]="title"
+
+- But since now properties are removed we simply write ngModel there without any brackets.
+
+- Since every input element is unique and is for capturing different values from user to create Product Object, we declare
+  'name' attribute on every input tag.
+
+- eg: ngModel name="title"
+
+- Internally everything will be binded and data will be passed from html to ts file by help of FormGroup instance.
+
+
+ProductCreate.component.html:
+-----------------------------
+
+<div class="container">
+  <div class="row">
+
+    <form #productForm = 'ngForm' (ngSubmit) = 'onAddNewProduct(productForm)'>
+      <div class="mb-3">
+        <label for="title" class="form-label">Title</label>
+        <input type="text" class="form-control" ngModel name ="title" />
+      </div>
+  
+      <div class="mb-3">
+        <label for="description" class="form-label">Description</label>
+        <input type="text" class="form-control" ngModel name ="description" />
+      </div>
+  
+      <div class="mb-3">
+        <label for="imagepath" class="form-label">ImageUrl</label>
+        <input type="text" class="form-control" ngModel name ="imagepath" />
+      </div>
+  
+      <div class="mb-3">
+        <label for="quantity" class="form-label">Quantity</label>
+        <input type="number" class="form-control" ngModel name ="quantity" />
+      </div>
+  
+      <button class="btn btn-primary mb-3"> Add New Product </button>
+    </form>
+  </div>
+</div>
+
+
+Adding validations in above form:
+---------------------------------
+
+- Again ngModel directive helps us to perform validations in given form.
+
+- We assign ngModel directive to a template referecnece variable.
+
+- Using this variable we can conditionally render the error messages.
+
+- ngModel internall provides some above discussed CSS for performing validations like touched, dirty, Valid etc.
+
+- We make every form input field as required.
+
+- And using template reference variable we write condition like if the input field is touched/visited by user and
+  specified validation is not fullfilled then display the error message.
+
+  eg:  #title = 'ngModel' required
+
+- Now above input filed will look like this,
+
+  eg:  <input type="text" class="form-control" ngModel name ="title"
+        #title = 'ngModel' required />
+        <div *ngIf = 'title.touched && title.invalid'> Title is required </div>
+
+- Finally we make Add button to be disabled untill form is correctly filled and validated by user.
+
+- We make use of FormGroup reference variable to do this.
+
+- We set [disabled] = 'productForm.form.invalid'
+
+- <button class="btn btn-primary mb-3" [disabled] = 'productForm.form.invalid'> Add New Product </button>
+
+
+Same form after adding validations:
+-----------------------------------
+
+<div class="container">
+  <div class="row">
+
+    <form #productForm = 'ngForm' (ngSubmit) = 'onAddNewProduct(productForm)'>
+      <div class="mb-3">
+        <label for="title" class="form-label">Title</label>
+        <input type="text" class="form-control" ngModel name ="title"
+        #title = 'ngModel' required />
+        <div *ngIf = 'title.touched && title.invalid'> Title is required </div>
+      </div>
+  
+      <div class="mb-3">
+        <label for="description" class="form-label">Description</label>
+        <input type="text" class="form-control" ngModel name ="description" 
+        #description='ngModel' required/>
+        <div *ngIf = 'description.touched && description.invalid'> Description is required </div>
+      </div>
+  
+      <div class="mb-3">
+        <label for="imagepath" class="form-label">ImagePath</label>
+        <input type="text" class="form-control" ngModel name ="imagepath"
+        #imagepath = 'ngModel' required />
+        <div *ngIf = 'imagepath.touched && imagepath.invalid'> ImagePath is required </div>
+      </div>
+  
+      <div class="mb-3">
+        <label for="quantity" class="form-label">Quantity</label>
+        <input type="number" class="form-control" ngModel name ="quantity"
+        #quantity = 'ngModel' required />
+        <div *ngIf = 'quantity.touched && quantity.invalid'> Quantity is required </div>
+      </div>
+  
+      <button class="btn btn-primary mb-3" [disabled] = 'productForm.form.invalid'> Add New Product </button>
+    </form>
+  </div>
+</div>
