@@ -886,13 +886,15 @@ export class InmemorydataService implements InMemoryDbService {
 
   - Inside forRoot() we have registered our created special service class.
 
-15) Also import HttpClientModule, which exposes the class which is responsible to send http calls.
+15) Also import HttpClientModule, which exposes the class which is responsible to respond to http calls.
+
+    eg: inmemorydata.service.ts, special service class in our case is exposed here by including this.
 
 16) Now we create another angular service inside shared folder which is going to send api calls.
 
 17) Inside shared -> ng g s apiproductcommunication
 
-18) Inside the newly created service class, declare url and private.
+18) Inside the newly created service class, declare url to make api call as private.
 
     eg: private productsUrl = 'api/products'
 
@@ -900,6 +902,8 @@ export class InmemorydataService implements InMemoryDbService {
  
     eg: constructor(private http: HttpClient) { }
 
+   - By injecting like this we can say that we somewhat got hold of instance of special service class which is 
+     inmemorydata.service.ts
 
 20) Then declare a getProducts() method which is going to make http api call and get list of products in the form of
     Observable Product array.
@@ -983,6 +987,146 @@ export class ProductlistComponent implements OnInit {
 }
 
 
-    
+
+-----------------------------------------------------------------------------------------------------------------------------
+
+Day-6:
+======
+
+http post request:
+==================
+
+1) To make http post req and add a new product through form, we make product create component inside apicomm folder.
+
+2) Everytime a new product is going to get added, a new Id is going to generated for it by the genId)() method.
+
+3) Inside special service class(inmemorydata.service.ts) -> we declare genId() method
+
+   eg:  // by default internally it gets above productlist as parameter
+        genId(products: Product[]): number {
+            return products.length > 0 ? Math.max(...products.map(prod => prod.id)) + 1
+                               : 1;
+        }
+
+4) Inside normal service class (apiprodcomm.service.ts) -> we declare addProduct() method.
+
+eg: // add/post
+     addProduct(title: string, description: string, imagepath: string, quantity: number): Observable<Product> {
+       const product = {
+          title: title,
+          description: description,
+          imagepath: imagepath,
+          quantity: quantity,
+      }
+     return this.http.post<Product>(this.productsUrl, product);
+    }
+
+- This method gets called by productcreate component by passing product details recieved from form.
+
+- This method recieve all product details and makes a JSON object using it.
+
+- Then it makes post() request to special service class / server.
+
+- This methods simply returns the added product in Observable form.
+
+5) Inside productcreate.component.ts -> We inject service class dependency through constructor.
+
+   eg: constructor(private apiproductcommunicationservice: ApiproductcommunicationService) { }
+
+6) Inside onAddProduct() handler we call addProduct() method from service and subscribe it because that method returns
+   same added product in Observable form.
+
+
+productcreate.component.ts:
+===========================
+
+import { Component, OnInit } from '@angular/core';
+import { NgForm } from '@angular/forms';
+import { ApiproductcommunicationService } from 'src/shared/apiproductcommunication.service';
+
+@Component({
+  selector: 'app-productcreate',
+  templateUrl: './productcreate.component.html',
+  styleUrls: ['./productcreate.component.css']
+})
+export class ProductcreateComponent implements OnInit {
+
+  constructor(private apiproductcommunicationservice: ApiproductcommunicationService) { }
+
+  ngOnInit(): void {
+  }
+
+  onAddNewProduct(productForm: NgForm) {
+   
+    this.apiproductcommunicationservice.addProduct(productForm.value.title, productForm.value.description,
+      productForm.value.imagepath, productForm.value.quantity)
+      .subscribe((response) => {
+        console.log(response);
+      })
+  }
+
+
+}
+
+problem occuring now:
+=====================
+
+- Everything is working well but updated product list is not getting read by reader component (productlist).
+
+
+Solution:
+==========
+
+- Declare a boolean Observable inside service class
+
+- publish it immediately to make it true when a new product is added inside productcreate component.
+
+- make reader component subscribe to this boolean Observable as well and make the get api call again whenever this
+  boolean observable returns true.
+
+
+1) Inside service class declare -> productListUpdated = new Subject<boolean>();
+
+   It is not declared as private now as done earlier during service communication, so that any component can easily access it.
+
+2) Inside product create class inside onAddNewProduct() method -> 
+
+       // as soon as new product is added by user, we set Observable flag to true 
+        this.apiproductcommunicationservice.productListUpdated.next(true);
+
+
+eg:  onAddNewProduct(productForm: NgForm) {
+   
+    this.apiproductcommunicationservice.addProduct(productForm.value.title, productForm.value.description,
+      productForm.value.imagepath, productForm.value.quantity)
+      .subscribe((response) => {
+        console.log(response);
+
+        // as soon as new product is added by user, we set Observable flag to true 
+        this.apiproductcommunicationservice.productListUpdated.next(true);
+      })
+  }
+
+
+3) Inside productlist component's ngOnInit() hook: 
+
+ eg:  ngOnInit(): void {
+    this.apiproductcommunicationservice.getProducts()
+    .subscribe((productListFromService: Product[]) => {
+      this.productList = productListFromService;
+    })
+
+    // ADDED LINE- making get api call again once new product is added
+    this.apiproductcommunicationservice.productListUpdated
+    .subscribe((updatedProductListFlag: boolean) => {
+      if(updatedProductListFlag) {
+        this.apiproductcommunicationservice.getProducts()
+        .subscribe((productListFromService: Product[]) => {
+        this.productList = productListFromService;
+    })
+        }
+    })
+  }
+
 
 

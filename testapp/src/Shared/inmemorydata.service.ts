@@ -11,7 +11,8 @@ export class InmemorydataService implements InMemoryDbService {
   //Overriden method
   createDb (reqInfo?: RequestInfo): {} | Observable<{}> | Promise<{}> {
 
-    let productlist: Product[] = [
+    let productlist: Product[] = [];
+    /* [
       new Product(
         'Service Noise-Headphones',
         'Wireless',
@@ -41,9 +42,15 @@ export class InmemorydataService implements InMemoryDbService {
         'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQGqGd0fkvTyYQzhYx8SgFhASlkzs44D0qjnA&usqp=CAU',
         6
       )
-    ]
+    ] */
 
     return { products: productlist } // api/products
+  }
+
+  // by default internally it gets above productlist as parameter
+  genId(products: Product[]): number {
+    return products.length > 0 ? Math.max(...products.map(prod => prod.id)) + 1
+                               : 1;
   }
 
   constructor () {}

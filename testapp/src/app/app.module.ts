@@ -29,6 +29,7 @@ import { DetailComponent } from './RegisterDetailTask/detail/detail.component';
 // Api communication
 //------------------
 import { ProductComponent } from './apicommunication/product/product.component';
+import { ProductcreateComponent } from './apicommunication/productcreate/productcreate.component';
 import { ProductlistComponent } from './apicommunication/productlist/productlist.component';
 import { ProductitemComponent } from './apicommunication/productitem/productitem.component';
 import { InmemorydataService } from 'src/shared/inmemorydata.service';
@@ -59,6 +60,7 @@ import { HttpClientModule } from '@angular/common/http';
     // ProductitemComponent,
 
     ProductComponent,
+    ProductcreateComponent,
     ProductlistComponent,
     ProductitemComponent,
   ],
