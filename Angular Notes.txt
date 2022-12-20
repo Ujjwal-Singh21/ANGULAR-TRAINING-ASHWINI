@@ -82,7 +82,7 @@ for eg:
 - Hence parent child relationship is created between app and test1 successfully.
 
 
--------------------------------------------------------------------------------------------------------------
+-----------------------------------------------------------------------------------------------------------------------------
 
 day-3
 -----
@@ -636,3 +636,353 @@ Same form after adding validations:
     </form>
   </div>
 </div>
+
+
+
+------------------------------------------------------------------------------------------------------------------------------
+
+Day-5:
+======
+
+Service Communication:
+======================
+
+- The main goal of creating services is code reusability.
+
+- We keep business logic centralized inside service.ts file generated using ng g c product
+
+- This service file is injectable as annotated with @Injectable() annotator and hence can be consumed by diff components.
+
+- We keep productList inside service file and it is consumed inside productList component.
+
+
+Steps:
+------
+
+1) Create servicecommunication file
+
+2) Remove all components related to product from app.module.ts
+
+3) Generate again ProductCreate, Product, ProductList and ProductItem components inside servicecommunication file.
+
+4) Inside Shared folder use command ng g s product to genrate product.service.ts file.
+
+5) Create a productList[] array inside service.
+
+6) Create a getter function getUpdatedProductList() which returns a copy of productList array i.e) [...productList]
+
+7) Also create an addProduct() method that recieves values from ProductCreate form and creates a new product instance
+   and pushes it inside productList[] array
+
+  eg:  addProduct(title: string, description: string, imagepath: string, quantity: number ) {
+           let newProduct = new Product(title, description, imagepath, quantity);
+           this.productList.push(newProduct);
+           console.log(this.productList);
+      }
+
+8) Now Service is ready.
+
+9) Go inside productlist.component.ts since it is only going to consume list of products from service.
+
+10) constructor() {} is used to inject productService instance
+    
+    eg: constructor(private productService: ProductService) { }
+
+11) ngOnInit() lifecycle hook is used to initialize the class's member variables.
+
+12) We declare a productList[] array of type Product.
+
+13) Inside ngOnInit() lifecycle hook we call getProducts() method of service class suing its instace injected in constructor.
+
+15) We initialize our declared productList[] with the list of products we have got from service.
+
+   eg:  ngOnInit(): void {
+         this.productList = this.productService.getProducts();
+       }
+
+
+Problem occuring now:
+---------------------
+
+- In browser we can see the hard-coded list of products from service.
+
+- But when we are adding new product through form, its getting created, pushed and added inside service class's 
+  productList[] array.
+
+- We can see that using console.log() inside addProduct() method of service.
+
+- But the issue is newly added product or we can say updated Product List is not getting recieved in productlist component.
+
+
+Solution:
+---------
+
+- Hence we make use of Subject observable.
+
+- We create Subject observable instance from rxjs in service class and use it to publish updatedProductList.
+
+- productlist component then subscribes to this observable and recieves updated product list.
+
+- The changes are successfully seen in browser ui.
+
+
+Observable:
+===========
+
+Observable - Unicast in nature, for every subscription a separate instance of observable is created.
+           - Therefor every subscription needs to be handled separately.
+
+   Subject - Type of observable that is multicast in nature.
+           - Only one instance is created for all subscriptions.
+           - Therefore any change in data will be multicasted to all subscribers.
+
+
+
+Steps to follow to implement observable:
+========================================
+
+product.service.ts
+==================
+
+  // creating the Subject Observable which is multicast and helps in publishing updated Product List
+  //------------------------------------------------------------------------------------------------
+  private updatedProductList = new Subject<Product[]>();
+
+  // Since subject observable is private hence required getter method and return it asObservable()
+  //----------------------------------------------------------------------------------------------
+  getUpdatedProductList() {
+    return this.updatedProductList.asObservable();
+  }
+
+  //add this line inside addProduct() method
+  //----------------------------------------
+  this.updatedProductList.next([...this.productList]);
+
+
+addProductMethod() after above update:
+--------------------------------------
+addProduct(title: string, description: string, imagepath: string, quantity: number ) {
+    let newProduct = new Product(title, description, imagepath, quantity);
+    this.productList.push(newProduct);
+
+    this.updatedProductList.next([...this.productList]);
+
+    console.log(this.productList);
+  }
+
+
+
+
+productlist.component.ts
+========================
+
+ // here we have subscribed and recieved the updated productList
+    this.productService.getUpdatedProductList().subscribe((updatedProductList: Product[]) => {
+      this.productList = updatedProductList;
+
+ngOnInit() hook after above update:
+-----------------------------------
+
+  ngOnInit(): void {
+    this.productList = this.productService.getProducts();
+
+    // here we have subscribed and recieved the updated productList
+    this.productService.getUpdatedProductList().subscribe((updatedProductList: Product[]) => {
+      this.productList = updatedProductList;
+    })
+  }
+
+
+
+Api-Communication:
+==================
+
+1) Clear app.module.ts and make project fresh.
+
+2) Inside app create a new folder apicommunication.
+
+3) Generate product, productlist, productitem components inside it.
+
+4) copy paste the existing templates for item and list. 
+
+   4.1) Inside productlist.component.ts -> declare and empty productList[] array.
+
+5) Inside apicommunication folder -> npm install angular-in-memory-web-api --save
+
+6) Inside shared folder -> ng g s inmemorydata
+
+7) inmemorydata.service.ts is not a regular service class.
+   It is a special service class that is going to expose the data at some endpoint.
+
+8) implements the class to InMemoryDbService interface (from angular-in-memory-web-api).
+
+9) Override the createDb() method to simulate the data server.
+
+10) create a similar hardcoded productList[] array inside this method.
+
+11) return {products: productList} from this method.
+    Here products is key and productList is the value that is going to be exposed.
+    at -> api/products
+ 
+inmemorydata.service.ts:
+------------------------
+import { Injectable } from '@angular/core'
+import { InMemoryDbService, RequestInfo } from 'angular-in-memory-web-api'
+import { Observable } from 'rxjs'
+import { Product } from './product.model'
+
+@Injectable({
+  providedIn: 'root'
+})
+export class InmemorydataService implements InMemoryDbService {
+
+  createDb (reqInfo?: RequestInfo): {} | Observable<{}> | Promise<{}> {
+    
+    let productlist: Product[] = [
+      new Product(
+        'InMem Headphones',
+        'Wireless',
+        'https://cdn.pixabay.com/photo/2018/09/17/14/27/headphones-3683983__480.jpg',
+        5
+      ),
+      new Product(
+        'InMem BT Headphones',
+        'Wireless',
+        'https://cdn.pixabay.com/photo/2018/09/17/14/27/headphones-3683983__480.jpg',
+        5
+      ),
+      new Product(
+        'InMem Boat Headphones',
+        'Wireless',
+        'https://cdn.pixabay.com/photo/2018/09/17/14/27/headphones-3683983__480.jpg',
+        5
+      ),
+      new Product(
+        'InMem JAbra Headphones',
+        'Wireless',
+        'https://cdn.pixabay.com/photo/2018/09/17/14/27/headphones-3683983__480.jpg',
+        5
+      )
+    ]
+
+    return { products: productlist } // api/products
+  }
+
+  constructor () {}
+}
+
+
+12) Now we have to register this special service class in app.module.ts so that the simulation server will be on and data
+    will be exposed at url endpoint.
+
+13) So under imports[] we have to register that angular service which is responsible for simulation of data server.
+
+14) HttpClientInMemoryWebApiModule.forRoot(InmemorydataService,
+      {dataEncapsulation: false})
+
+  - dataEncapsulation: false -> data will be stored directly inside response object.
+
+  - dataEncapsulation: true -> data will be stored inside response object data property.
+
+  - Inside forRoot() we have registered our created special service class.
+
+15) Also import HttpClientModule, which exposes the class which is responsible to send http calls.
+
+16) Now we create another angular service inside shared folder which is going to send api calls.
+
+17) Inside shared -> ng g s apiproductcommunication
+
+18) Inside the newly created service class, declare url and private.
+
+    eg: private productsUrl = 'api/products'
+
+19) Inject HttpClient object inside constructor.
+ 
+    eg: constructor(private http: HttpClient) { }
+
+
+20) Then declare a getProducts() method which is going to make http api call and get list of products in the form of
+    Observable Product array.
+
+    getProducts() : Observable<Product[]> {
+    return this.http.get<Product[]>(this.productsUrl);
+    }
+
+apiproductcommunication.service.ts:
+-----------------------------------
+
+import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
+import { Product } from './product.model';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class ApiproductcommunicationService {
+
+  private productsUrl = 'api/products'
+
+  constructor(private http: HttpClient) { }
+
+  getProducts() : Observable<Product[]> {
+    return this.http.get<Product[]>(this.productsUrl);
+  }
+}
+
+
+Inside productlist.component.ts:
+--------------------------------
+
+1) Since everything is done now and our service class is doing api call to special service class using url and getting
+   list of products in the form of Observable Product array.
+
+2) We inject the dependecy of apiproductcommunicationservice inside constructor.
+
+   eg: constructor(private apiproductcommunicationservice: ApiproductcommunicationService) { }
+
+
+3) Inside ngOnInit() hook we use dependency instance and make call to getProducts() method of service class and subscribe
+   to it.
+
+  eg:  ngOnInit(): void {
+            this.apiproductcommunicationservice.getProducts()
+            .subscribe((productListFromService: Product[]) => {
+            this.productList = productListFromService;
+          })
+       }
+
+4) Inside subsribe() method callback we recieve list of products using which we initializes and set to our empty declared
+   productList[] array.
+
+
+productlist.component.ts:
+=========================
+import { Component, OnInit } from '@angular/core';
+import { ApiproductcommunicationService } from 'src/shared/apiproductcommunication.service';
+import { Product } from 'src/shared/product.model';
+
+@Component({
+  selector: 'app-productlist',
+  templateUrl: './productlist.component.html',
+  styleUrls: ['./productlist.component.css']
+})
+export class ProductlistComponent implements OnInit {
+
+  productList: Product[];
+
+  constructor(private apiproductcommunicationservice: ApiproductcommunicationService) { }
+
+  ngOnInit(): void {
+    this.apiproductcommunicationservice.getProducts()
+    .subscribe((productListFromService: Product[]) => {
+      this.productList = productListFromService;
+    })
+  }
+
+}
+
+
+    
+
+
