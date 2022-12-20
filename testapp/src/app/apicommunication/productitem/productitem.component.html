@@ -1,0 +1,40 @@
+<div class="shadow-lg -3 mb-5 bg-white rounded">
+
+  <div>
+    <h6> {{ product.title }}</h6>
+  </div>
+
+  <hr>
+
+  <div>
+    <i> {{ product.description }} </i>
+  </div>
+
+  <hr>
+
+  <div>
+    <strong> Quantity: {{ product.quantity }} </strong>
+  </div>
+
+  <hr>
+
+  <span class="align-middle">
+    <img [src]="product.imagepath" alt="{{ product.title }}" class="img-fluid" />
+  </span>
+
+  <hr>
+
+  <div *ngIf="product.comments.length == 0; else comments">
+    <p style="color: red"> No Comments :( </p>
+  </div>
+
+  <ng-template #comments>
+    <strong style="color: blue"> Comments: </strong>
+    <ul class="list-group list-group-flush">
+      <li class="list-group-item" *ngFor="let comment of product.comments">
+       * {{ comment }}
+      </li>
+    </ul>
+  </ng-template>
+</div>
+
