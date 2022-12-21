@@ -1129,4 +1129,170 @@ eg:  onAddNewProduct(productForm: NgForm) {
   }
 
 
+---------------------------------------------------------------------------------------
+
+Routing:
+========
+
+- Angular has got its own routing service.
+
+- app-routing.module.ts file is generated while creating the project.
+
+- There already { RouterModule, Routes } is imported from '@angular/router'
+
+- Using these 2 we can configure routing in html.
+
+- In the file we have an already declared array, -> const routes: Routes = [ ]
+
+- Inside this array we are going to define and configure routes for diff angular components.
+
+- Also we have an already given AppRoutingModule class in the same file which looks like this,
+
+@NgModule({
+  imports: [RouterModule.forRoot(routes)], // line-1
+  exports: [RouterModule]
+})
+export class AppRoutingModule { }
+
+- If we want to register our above defined routes of different components to get registered to AngularEngineRoutingService,
+  then //line-1 is very important which helps us to do the same.
+
+
+Steps to follow:
+================
+
+1) Create 2 more components header and discountedproducts inside apicomm folder.
+
+2) Copy bootsrap code for header inside header component html file.
+
+3) Place the selector of header component inside app.component.html
+
+4) Only header component should loaded at first in browser and in navbar we have products and discountedproducts links.
+
+5) So either of one from both should be loaded below navbar on their button clicks.
+
+6) Hence we are not going to place selectors of any component inside app.component.html file, rather we need a container 
+   who is dynamically going to make place from either one of bothcomponents to get rendered.
+
+7) <router-outlet> </router-outlet> helps us to achieve the goal and hence placed below <app-header> inside app html file.
+
+8) So whereever we want to render a component at runtime we use this tag.
+
+9) Next we define the tags for both components inside app-routing.module.ts file routes array in JSON format.
+
+eg:
+--
+
+const routes: Routes = [
+  {
+    path: "products",
+    component: ProductComponent
+  },
+
+  {
+    path: 'discountedproducts',
+    component: DiscountedproductsComponent
+  }
+];
+
+9) Finally we register this routes on their specific anchor tags inside header's html file using rouerLink attribute.
+
+
+eg:         <a class="nav-link" routerLink = 'products'>Products</a>
+
+            <a class="nav-link" routerLink = 'discountedproducts'>Discounted-Products</a>
+
+
+- This is called as routing through template file, we can also perform routing through ts file.
+
+- Now once we click on products link, we get form from productcreate component and when we enter data and click on the
+  addproduct button the added data is visible at top and hence at /products now 2 components are rendered at a time which
+  are productlist and productcreate.
+
+- But we want productcreate to get rendred only when we click on Add a new product button.
+
+
+steps:- (routing through ts file):
+---------------------------------
+
+1) Hence we go inside productlist component html file create a div tag 'No products to show' there which will get rendered
+   only when productList is empty i.e) length==0.
+
+2) Also we add a button 'Add New Product' and assing a handler 'onAddProduct()' to it.
+
+3) We will define this handler in productlist ts file and give routing logic there,
+
+4) Before that we know that Productlist component is child component of Product and hence we define its routing under the
+   product's routing {} braces by using children: [{}] attribute.
+
+example:
+-------
+const routes: Routes = [
+  {
+    path: 'products',
+    component: ProductComponent,
+    //see-here
+    children: [
+      {
+        path: 'new', // https:localhost:4200/products/new
+        component: ProductcreateComponent
+      }
+    ]
+  },
+
+  {
+    path: 'discountedproducts',
+    component: DiscountedproductsComponent
+  }
+];
+
+5) Inside Product's component file we remove <product-create> tag and place <router-outlet> tag, because we want the
+   ProductCreate to get rendered dynamically.
+
+6) Now we come inside ProductList.ts file and start defining handler code.
+
+7) Here we need dependency of angular built in router in this file hence we inject it through constructor.
+
+   -> private router: Router from '@angular/router'
+
+8) And now because we are trying to navigate to child path, to navigate to the child path it should be relative to parent
+   path we need one more dependency 
+ 
+  -> private route: ActivatedRoute from '@angular/router'
+
+  -> Activated route is a object which will help us to gather the information of current parent component that is loaded
+     in the browser.
+
+9) onAddNewProduct() {
+    this.router.navigate(['new'], {relativeTo: this.route})
+   }
+
+10) Now only on button click productcreate form is rendered.
+
+11) But we want it to disappear once the data is filled and product is added.
+
+12) Hence we go inside productcreate.ts file and inject dependency as step no 7 only.
+
+13) And inside addNewProduct() method as soon as product is added we navigate to /products.
+
+example:
+--------
+
+onAddNewProduct(productForm: NgForm) {
+   
+    this.apiproductcommunicationservice.addProduct(productForm.value.title, productForm.value.description,
+      productForm.value.imagepath, productForm.value.quantity)
+      .subscribe((response) => {
+        console.log(response);
+
+        // as soon as new product is added by user, we set Observable flag to true 
+        this.apiproductcommunicationservice.productListUpdated.next(true);
+
+        // see-here -> navigate to /products as soon as new product is added and make form to disappear
+        this.router.navigate(['']);
+      })
+  }
+
+
+
 

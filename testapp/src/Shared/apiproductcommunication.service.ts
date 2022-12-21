@@ -10,6 +10,7 @@ export class ApiproductcommunicationService {
 
   private productsUrl = 'api/products'
 
+  // to keep reader and writer in sync with updated list of products
   productListUpdated = new Subject<boolean>();
 
   constructor(private http: HttpClient) { }
@@ -28,6 +29,20 @@ export class ApiproductcommunicationService {
       quantity: quantity,
     }
    return this.http.post<Product>(this.productsUrl, product);
+  }
+
+  // get by id 
+  getProduct(id: number): Observable<Product> {
+    return this.http.get<Product>(`${this.productsUrl}/${id}`)
+  }
+
+  // update 
+  updateProduct(updatedProduct: Product): Observable<any> {
+    return this.http.put(`${this.productsUrl}/${updatedProduct.id}`, updatedProduct);
+  }
+
+  deleteProduct(id: number): Observable<any> {
+    return this.http.delete(`${this.productsUrl}/${id}`);
   }
 
 }

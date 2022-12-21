@@ -30,7 +30,14 @@
         <div *ngIf = 'quantity.touched && quantity.invalid'> Quantity is required </div>
       </div>
   
+     <div *ngIf = 'editMode == false'>
       <button class="btn btn-primary mb-3" [disabled] = 'productForm.form.invalid'> Add New Product </button>
+     </div>
+
+     <div *ngIf = 'editMode == true'>
+      <button class="btn btn-warning mb-3" [disabled] = 'productForm.form.invalid'> Update Product </button>
+     </div>
+
     </form>
   </div>
 </div>

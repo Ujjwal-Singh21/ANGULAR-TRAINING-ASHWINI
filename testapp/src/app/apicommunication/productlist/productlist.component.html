@@ -1,5 +1,15 @@
 <div class="container">
+
   <div class="row">
+    <div class="col-xs-12">
+       <button class="btn btn-primary" (click)="onAddNewProduct()">Add New Product</button>
+    </div>
+</div>
+
+  <div class="row">
+    <div *ngIf = 'productList.length == 0'>
+      No products to show 
+    </div>
 
     <div class="col-md-2" *ngFor="let productElement of productList">
       <!-- parent to child data transfer - 

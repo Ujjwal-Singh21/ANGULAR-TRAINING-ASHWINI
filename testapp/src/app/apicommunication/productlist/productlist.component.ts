@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ApiproductcommunicationService } from 'src/shared/apiproductcommunication.service';
 import { Product } from 'src/shared/product.model';
 
@@ -9,9 +10,10 @@ import { Product } from 'src/shared/product.model';
 })
 export class ProductlistComponent implements OnInit {
 
-  productList: Product[];
+  productList: Product[] = [];
 
-  constructor(private apiproductcommunicationservice: ApiproductcommunicationService) { }
+  constructor(private apiproductcommunicationservice: ApiproductcommunicationService,
+    private router: Router, private route: ActivatedRoute) { }
 
   ngOnInit(): void {
     this.apiproductcommunicationservice.getProducts()
@@ -29,6 +31,11 @@ export class ProductlistComponent implements OnInit {
     })
         }
     })
+  }
+
+  
+  onAddNewProduct() {
+    this.router.navigate(['new'], {relativeTo: this.route})
   }
 
 }
