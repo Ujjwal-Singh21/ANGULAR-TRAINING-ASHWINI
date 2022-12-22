@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -13,7 +14,6 @@ import { JobComponent } from './Basics/job/job.component';
 import { EmployeeComponent } from './ParentChildCommunication2/employee/employee.component';
 import { EmployeelistComponent } from './ParentChildCommunication2/employeelist/employeelist.component';
 import { EmployeeitemComponent } from './ParentChildCommunication2/employeeitem/employeeitem.component';
-import { FormsModule } from '@angular/forms';
 import { EmployeecreateComponent } from './ParentChildCommunication2/employeecreate/employeecreate.component';
 import { RegisterComponent } from './RegisterDetailTask/register/register.component';
 import { DetailComponent } from './RegisterDetailTask/detail/detail.component';
@@ -76,6 +76,7 @@ import { LogoutComponent } from './apicommunication/logout/logout.component';
     BrowserModule,
     AppRoutingModule,
     FormsModule,
+    ReactiveFormsModule,
 
     HttpClientModule,
     HttpClientInMemoryWebApiModule.forRoot(InmemorydataService,

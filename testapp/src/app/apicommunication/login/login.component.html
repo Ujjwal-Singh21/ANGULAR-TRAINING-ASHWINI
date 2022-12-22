@@ -1,11 +1,33 @@
-<div class="mb-3">
-  <label for="username" class="form-label"> Username </label>
-  <input type="text" class="form-control" [(ngModel)] = 'username'/>
-</div>
+<div class="container" [formGroup] = 'loginform'>
+ <div>
+  <div class="mb-3">
+    <label for="username" class="form-label"> Username </label>
+    <input type="text" class="form-control" formControlName = 'username'/>
+  </div>
 
-<div class="mb-3">
-  <label for="password" class="form-label"> Password </label>
-  <input type="password" class="form-control" [(ngModel)] = 'password'/>
+  <div *ngIf = 'LoginformControls.username.touched && LoginformControls.username.invalid' style="color: red;">
+     Username is required 
+  </div>
+ </div>
+  
+  <div>
+    <div class="mb-3">
+      <label for="password" class="form-label"> Password </label>
+      <input type="password" class="form-control" formControlName = 'password'/>
+    </div>
+    
+    <div *ngIf = 'LoginformControls.password.touched && LoginformControls.password.invalid'>
+     
+      <div *ngIf = 'LoginformControls.password.errors.required' style="color: red;">
+        Password is required 
+      </div>
+  
+      <div *ngIf = 'LoginformControls.password.errors.invalid' style="color: red;">
+        Minimum length should be 3
+      </div>
+   </div>
+  </div>
+  
+  <br />
+  <button class="btn btn-info" (click) =  'onLoginHandler()'> Login </button>
 </div>
-
-<button class="btn btn-primary" (click) =  'onLoginHandler()'> Login </button>

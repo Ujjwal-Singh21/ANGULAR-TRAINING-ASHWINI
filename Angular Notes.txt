@@ -1506,3 +1506,142 @@ example:
 
 day-8
 =====
+
+Converting login form ( from 2 way binding to reactive approach form):
+======================================================================
+
+Existing login form:
+--------------------
+
+<div class="mb-3">
+  <label for="username" class="form-label"> Username </label>
+  <input type="text" class="form-control" [(ngModel)] = 'username'/>
+</div>
+
+<div class="mb-3">
+  <label for="password" class="form-label"> Password </label>
+  <input type="password" class="form-control" [(ngModel)] = 'password'/>
+</div>
+
+<button class="btn btn-primary" (click) =  'onLoginHandler()'> Login </button>
+
+
+Steps to convert to reactive form:
+----------------------------------
+
+-> All validation and other logics are now written inside ts file than html file.
+
+1) Remove username and password properties declared for 2 way binding form.
+
+2) In app.module.ts imports[] array, import ReactiveFormsModule from '@angular/forms'.
+
+3) Declare both username and password properties like this:
+
+example:
+--------
+ loginform = new FormGroup({
+    username: new FormControl('', [Validators.required]),
+    password: new FormControl('', [Validators.required, this.customValidator])
+  })
+
+- Here 1st arg to FormControl is initial value of variable and 2nd arg is array of validators.
+
+4) Inside onLoginHandler() use username and password from this.username, this.password to this.loginform.value.username/password.
+
+5) Define 2 validators one for normal required check and 2nd for custom validations.
+
+example:
+--------
+
+  // validator
+  get LoginformControls(): any {
+    return this.loginform['controls'];
+  }
+
+  // Custom Validator
+  customValidator(control: FormControl): {[key: string]: boolean} | null {
+    if(control.value.length < 3) {
+      return {'invalid': true}
+    }
+    return null; 
+  }
+
+6) Now we are done with ts file coding and we move to make changes into html file.
+
+7) We start by enclosing whole existing form inside a <div> tag.
+
+8) We declare [formGroup] = 'loginForm' at this <div> tag to connect this form with ts file, here 'loginForm' is nothing but the
+   FormGroup declared inside ts file for declaring properties.
+
+9) We then remove [{ngModule}] = 'username' approach of 2 way binding and write it as formControlName = 'username'
+
+10) Finally we make use of LoginformControls() validator and use it to write required logic.
+
+example:
+--------
+<div *ngIf = 'LoginformControls.username.touched && LoginformControls.username.invalid' style="color: red;">
+     Username is required 
+</div>
+
+11) We do same for password field but also we have declared one more customValidator for password field to check min length < 3.
+
+12) Hence we declare 2 div tags for password and use one for required and other for minlength.
+
+example:
+--------
+<div *ngIf = 'LoginformControls.password.touched && LoginformControls.password.invalid'>
+     
+      <div *ngIf = 'LoginformControls.password.errors.required' style="color: red;">
+        Password is required 
+      </div>
+  
+      <div *ngIf = 'LoginformControls.password.errors.invalid' style="color: red;">
+        Minimum length should be 3
+      </div>
+</div>
+
+- Here for custom validation ngIf, we have used .errors
+
+- If error is for required field we say -> password is required
+
+- If error is for invalid field as per our code of custom validator we say -> Min length should be < 3]
+
+
+New Reactive approach login form:
+==================================
+
+<div class="container" [formGroup] = 'loginform'>
+ <div>
+  <div class="mb-3">
+    <label for="username" class="form-label"> Username </label>
+    <input type="text" class="form-control" formControlName = 'username'/>
+  </div>
+
+  <div *ngIf = 'LoginformControls.username.touched && LoginformControls.username.invalid' style="color: red;">
+     Username is required 
+  </div>
+ </div>
+  
+  <div>
+    <div class="mb-3">
+      <label for="password" class="form-label"> Password </label>
+      <input type="password" class="form-control" formControlName = 'password'/>
+    </div>
+    
+    <div *ngIf = 'LoginformControls.password.touched && LoginformControls.password.invalid'>
+     
+      <div *ngIf = 'LoginformControls.password.errors.required' style="color: red;">
+        Password is required 
+      </div>
+  
+      <div *ngIf = 'LoginformControls.password.errors.invalid' style="color: red;">
+        Minimum length should be 3
+      </div>
+   </div>
+  </div>
+  
+  <br />
+  <button class="btn btn-info" (click) =  'onLoginHandler()'> Login </button>
+</div>
+
+
