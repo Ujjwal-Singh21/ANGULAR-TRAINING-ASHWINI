@@ -47,6 +47,8 @@ export class ProductcreateComponent implements OnInit {
    }
   }
 
+  // Handler that handles both add/update events
+  //---------------------------------------------
   onAddNewProduct(productForm: NgForm) {
    
     // add-logic

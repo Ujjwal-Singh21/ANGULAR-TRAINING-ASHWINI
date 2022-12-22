@@ -24,7 +24,9 @@ export class ProductlistComponent implements OnInit {
     // making get api call again once new product is added
     this.apiproductcommunicationservice.productListUpdated
     .subscribe((updatedProductListFlag: boolean) => {
+
       if(updatedProductListFlag) {
+        
         this.apiproductcommunicationservice.getProducts()
         .subscribe((productListFromService: Product[]) => {
         this.productList = productListFromService;

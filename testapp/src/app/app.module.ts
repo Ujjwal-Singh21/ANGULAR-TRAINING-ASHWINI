@@ -37,6 +37,8 @@ import { HttpClientInMemoryWebApiModule } from 'angular-in-memory-web-api';
 import { HttpClientModule } from '@angular/common/http';
 import { HeaderComponent } from './apicommunication/header/header.component';
 import { DiscountedproductsComponent } from './apicommunication/discountedproducts/discountedproducts.component';
+import { LoginComponent } from './apicommunication/login/login.component';
+import { LogoutComponent } from './apicommunication/logout/logout.component';
 
 @NgModule({
   declarations: [
@@ -67,6 +69,8 @@ import { DiscountedproductsComponent } from './apicommunication/discountedproduc
     ProductitemComponent,
     HeaderComponent,
     DiscountedproductsComponent,
+    LoginComponent,
+    LogoutComponent,
   ],
   imports: [
     BrowserModule,

@@ -1294,5 +1294,215 @@ onAddNewProduct(productForm: NgForm) {
   }
 
 
+update logic:
+-------------
 
 
+
+-----------------------------------------------------------------------------------------------------------------------------
+
+day-7
+-----
+
+update, delete:
+---------------
+
+- We declare updateProduct() and deleteProduct() in api service class.
+
+- for update we make use of same form that is used for adding purpose.
+
+- We just make some changes inside onAddProduct() handler of productcreate and write add logic inside if condition and update logic 
+  inside else condition.
+
+- Now since this same component is used for both add and update, we need to find out when it is used for add and when it is used for
+  update purpose.
+
+- We can find about it using url that whether it is /product/new or /product/edit/id.
+
+- In urls from /products it can be seen and understood that product component is parent of this productcreate component.
+
+- Therefore we inject route:Activated route to get parents information.
+
+- We had already declared id and editmode variables and we initialize them inside onInit hook.
+
+- We subscribe to params using route and initialize them both.
+
+eg: ngOnInit(): void {
+    this.route.params.subscribe((params: Params) => {
+      this.id = +params['id'];
+      this.editMode = params['id']!= null;
+      this.initForm();
+    })
+  }
+
+- This editmode variable is also used to conditionally render add and update buttons.
+
+- @ViewChild() annotator is used to get access to each input fields of forms and populate them with the data received from backend
+  api while update.
+
+eg: // It provide access to html file elements and its values from ts file 
+    @ViewChild('productForm') productFormViewChild:NgForm;
+
+
+handler that populates form while update:
+=========================================
+
+  // handler to populate form during update
+  //---------------------------------------
+  initForm() {
+
+    let productDetails: Product;
+
+   if(this.editMode == true) {
+    this.apiproductcommunicationservice.getProduct(this.id)
+    .subscribe((currentProductDetails: Product) => {
+
+      productDetails = currentProductDetails;
+
+      this.productFormViewChild
+      .setValue({title: productDetails.title, description: productDetails.description,
+                 imagepath: productDetails.imagepath, quantity: productDetails.quantity})
+    })
+   }
+  }
+
+---------------------------------------------------------------------------------------------------------
+
+Handler that manages both add and update logics:
+================================================
+
+  // Handler that handles both add/update events
+  //---------------------------------------------
+  onAddNewProduct(productForm: NgForm) {
+   
+    // add-logic
+    if(this.editMode == false) {
+      this.apiproductcommunicationservice.addProduct(productForm.value.title, productForm.value.description,
+        productForm.value.imagepath, productForm.value.quantity)
+        .subscribe((response) => {
+          console.log('Add response', response);
+  
+          // as soon as new product is added by user, we set Observable flag to true 
+          this.apiproductcommunicationservice.productListUpdated.next(true);
+        });
+
+        // navigate to /products as soon as new product is added and make form to disappear
+        this.router.navigate(['']);
+    } 
+
+    //update-logic
+    else {
+      let updatedProduct = new Product(productForm.value.title, productForm.value.description,
+        productForm.value.imagepath, productForm.value.quantity);
+
+        updatedProduct.id = this.id;
+
+      this.apiproductcommunicationservice.updateProduct(updatedProduct)
+      .subscribe((resp) => {
+        console.log('Update respose', resp)
+        this.apiproductcommunicationservice.productListUpdated.next(true);
+      })
+
+      this.router.navigate(['']);
+    }
+  }
+
+----------------------------------------------------------------------------------------------------------
+
+Authentication Login and Logout with RouteGuard:
+------------------------------------------------
+
+1) Create a service class inside shared folder as auth and define onLogin() and onLogOut() handlers inside it.
+
+2) Create Login and Logout components inside apicommunication folder.
+
+3) Configure routes for both of them inside routing.ts file.
+
+4) Add 2 more links at navbar for Login and Logout inside Header component's html file.
+
+5) Create a simple form inside login html file for login.
+
+6) Declare username and password variables inside login ts file and use 2 way binding to manage state data of these variables.
+
+7) Declare onLogin() handler inside login ts file and inject authservice dependency as well as Router dependecy through
+   constructor.
+
+8) Call onLogin() method of auth service inside handler and capture its returned boolean value in variable called flag.
+
+9) If flag is true navigate to /products
+
+10) Now we want to display either Login and Logout based on user's state.
+
+11) Hence we declare a boolean observable inside authservice and publish it as true inside onLogin() handler and as false
+    inside onLogOut() handler.
+
+12) Header component injects authservice dependency and subscribe to this boolean observable and stores it in a variable
+    declared inside it which is 'isUserLoggedIn'
+
+13) Using this variable inside its header.html file with the help of *ngIf directive Login and Logout links are managed.
+
+14) Inside logout component we inject authservice dependency again and invoke onLogOut handler from authservice inside ngOnInit.
+
+15) Now Login and Logout are working successfully but still at navbar products link is openly accessbile to user.
+
+16) To protect some links/urls from been accessible to anonymous user we make use of RouteGuard.
+
+17) Inside shared folder -> ng generate guard auth and select onActivate() Interface.
+
+18) Go to this auth.guard.ts and define constructor and inject authservice dependency.
+
+19) Get isUSerLoggedIn state from authservice and based on that write logic inside canActivate() method.
+
+example:
+--------
+canActivate(
+    route: ActivatedRouteSnapshot,
+    state: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
+    
+      this.authService.isUserLoggedIn.subscribe((isUserLoggedInFromService) => {
+          this.isUserLoggedIn = isUserLoggedInFromService;
+      })
+
+      // if user is logged in, return true and expose /products url/link for user to access
+      if(this.isUserLoggedIn) {
+        return true;
+      }
+
+      // if user is not logged in, return false and navigate user to login page
+      else {
+        this.router.navigate(['login']);
+        return false;
+      }
+  }
+
+
+20) Go inside routing file and declare canActivate property and set it to AuthGuard we have created inside that component
+    configuration which we do not want to expose to anaonymous user.
+
+example:
+--------
+  {
+    path: 'products',
+    component: ProductComponent,
+
+    children: [
+      {
+        path: 'new', // https:localhost:4200/products/new
+        component: ProductcreateComponent
+      },
+
+      {
+        path: 'edit/:id',
+        component: ProductcreateComponent
+      }
+    ],
+
+    canActivate: [AuthGuard] // /products is safe guarded and not exposed to anonymous users
+  },
+
+
+
+----------------------------------------------------------------------------------------------------------------------------------------------
+
+day-8
+=====

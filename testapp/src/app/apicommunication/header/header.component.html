@@ -29,6 +29,14 @@
             <a class="nav-link" routerLink = 'discountedproducts'>Discounted-Products</a>
           </li>
 
+          <li class="nav-item" *ngIf = 'isUserLoggedIn == false'>
+            <a class="nav-link" routerLink = 'login'>LogIn</a>
+          </li>
+
+          <li class="nav-item" *ngIf = 'isUserLoggedIn == true'>
+            <a class="nav-link" routerLink = 'logout'>LogOut</a>
+          </li>
+
         </ul>
 
       </div>
