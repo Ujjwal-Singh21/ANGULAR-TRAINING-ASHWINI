@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Observable } from 'rxjs';
 import { AuthService } from 'src/shared/auth.service';
 
 @Component({
@@ -7,6 +8,12 @@ import { AuthService } from 'src/shared/auth.service';
   styleUrls: ['./header.component.css']
 })
 export class HeaderComponent implements OnInit {
+
+  statictime = new Date().toString();
+
+  runningtime = new Observable<string>((observer) => {
+    setInterval(() => observer.next(new Date().toString()), 1000)
+  })
 
   isUserLoggedIn: boolean = false;
 

@@ -1645,3 +1645,167 @@ New Reactive approach login form:
 </div>
 
 
+----------------------------------------------------------------------------------------------------------------------------------------
+
+day-9:
+======
+
+Directives:
+===========
+
+Conditionally rednering the title and quantity of product as grey if the quantity is < 1
+-----------------------------------------------------------------------------------------
+
+1) src - app - ng generate directive outofstock
+
+2) A directive is going to be used on a particular component's html tag.
+
+3) That element is called as host element.
+
+4) We place the selector of directive on that particular host element.
+
+5) To access any particular host element we need dependecy injection of ElementRef.
+
+6) A component and Directive lifecycle is same, it just that directives does not have a separate template file like a normal
+   components have.
+
+7) Firstly we make title and quantity as grey inside ngOnInit().
+
+8) We can also handle the events of host elements like click handler inside directive by defining a clickhandler and using
+   @HostListener('click') annotation.
+
+
+
+outoftstock.directive.ts
+------------------------
+
+import { Directive, ElementRef, HostListener, Input } from '@angular/core'
+
+@Directive({
+  selector: '[appOutofstock]'
+})
+export class OutofstockDirective {
+
+  @Input() qty: number
+
+  constructor (private elementRef: ElementRef) {}
+
+  @HostListener('click')
+  clickhandler () {
+    if (this.qty < 1) {
+      this.elementRef.nativeElement.style.backgroundColor = 'gray'
+    }
+  }
+
+  ngOnInit () {
+    // if (this.qty < 1) {
+    //   this.elementRef.nativeElement.style.backgroundColor = 'gray';
+    // }
+  }
+}
+
+Pipes:
+======
+
+- These are useful for transforming the data.
+
+- There are many built in pipes.
+
+1) Slice:
+---------
+
+- Use to show substring of a string.
+
+- <h6 appOutofstock [qty] = 'product.quantity'> {{ product.title | slice:0:10 }}... </h6>
+
+2) Currency:
+------------
+
+- Use to show price along with currency symbol.
+
+-  <div>
+    <p> {{20000 | currency: 'INR' : 'symbol'}} </p>
+  </div>
+
+-> There are 2 types of pipe.
+
+1) Pure pipes
+-------------
+
+- The value to be transformed is changed only then transform functionality is executed.
+
+
+2) Impure pipe
+--------------
+
+- Whether or not the value is changed, but if the change redcution cycle is executed the pipe is executed.
+
+- eg: async
+
+- used with observables.
+
+- used to show running dynamic time inside navbar header component.
+
+
+Custom pipe:
+------------
+
+- We have used custom pipe in a scenario where imagepath is null and not entered by user.
+
+- We hace created a custom pipe named defimg and use it inside productcreate template.
+
+- In src - app - ng generate pipe defimg
+
+
+normal raw file:
+----------------
+import { Pipe, PipeTransform } from '@angular/core';
+
+@Pipe({
+  name: 'defimg'
+})
+export class DefimgPipe implements PipeTransform {
+
+  transform(value: unknown, ...args: unknown[]): unknown {
+    return null;
+  }
+
+}
+
+- We remove required from productcreate template on imagepath.
+
+- We provide null as default value inside apiservicecommunication.
+
+- We use the custom pipe on imagepath inside productitem on src attribute.
+
+eg:
+--
+<span class="align-middle">
+    <img [src]="product.imagepath | defimg: 'https://media.wired.com/photos/5f2b2e792f0075bf6e0a1de6/2:3/w_1200,h_1800,
+                c_limit/Gear-Sony-WH-1000XM4-1-SOURCE-Sony.jpg' " alt="{{ product.title }}" class="img-fluid" />
+</span>
+
+
+After our changes:
+------------------
+import { Pipe, PipeTransform } from '@angular/core';
+
+@Pipe({
+  name: 'defimg'
+})
+export class DefimgPipe implements PipeTransform {
+
+  transform(value: string, defaultimagepath: string): string {
+    if(value) {
+      return value;
+    }
+    return defaultimagepath;
+  }
+
+}
+
+
+
+
+
+

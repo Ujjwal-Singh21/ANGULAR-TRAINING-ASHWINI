@@ -39,6 +39,8 @@ import { HeaderComponent } from './apicommunication/header/header.component';
 import { DiscountedproductsComponent } from './apicommunication/discountedproducts/discountedproducts.component';
 import { LoginComponent } from './apicommunication/login/login.component';
 import { LogoutComponent } from './apicommunication/logout/logout.component';
+import { OutofstockDirective } from './outofstock.directive';
+import { DefimgPipe } from './defimg.pipe';
 
 @NgModule({
   declarations: [
@@ -71,6 +73,8 @@ import { LogoutComponent } from './apicommunication/logout/logout.component';
     DiscountedproductsComponent,
     LoginComponent,
     LogoutComponent,
+    OutofstockDirective,
+    DefimgPipe,
   ],
   imports: [
     BrowserModule,

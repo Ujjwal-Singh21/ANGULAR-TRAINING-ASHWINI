@@ -16,12 +16,21 @@
         <div *ngIf = 'description.touched && description.invalid'> Description is required </div>
       </div>
   
-      <div class="mb-3">
+      <!-- <div class="mb-3">
         <label for="imagepath" class="form-label">ImagePath</label>
         <input type="text" class="form-control" ngModel name ="imagepath"
         #imagepath = 'ngModel' required />
         <div *ngIf = 'imagepath.touched && imagepath.invalid'> ImagePath is required </div>
+      </div> -->
+
+      <!-- for custom pipe defimg  -->
+      <div class="mb-3">
+        <label for="imagepath" class="form-label">ImagePath</label>
+        <input type="text" class="form-control" ngModel name ="imagepath"
+        #imagepath = 'ngModel' />
+        <div *ngIf = 'imagepath.touched && imagepath.invalid'> ImagePath is required </div>
       </div>
+  
   
       <div class="mb-3">
         <label for="quantity" class="form-label">Quantity</label>

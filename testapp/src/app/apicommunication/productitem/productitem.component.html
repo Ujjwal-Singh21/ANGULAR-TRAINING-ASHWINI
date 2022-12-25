@@ -1,7 +1,7 @@
 <div class="shadow-lg -3 mb-5 bg-white rounded">
 
   <div>
-    <h6> {{ product.title }}</h6>
+    <h6 appOutofstock [qty] = 'product.quantity'> {{ product.title | slice:0:10 }}... </h6>
   </div>
 
   <hr>
@@ -13,16 +13,25 @@
   <hr>
 
   <div>
-    <strong> Quantity: {{ product.quantity }} </strong>
+    <strong appOutofstock [qty] = 'product.quantity'> Quantity: {{ product.quantity }} </strong>
   </div>
 
   <hr>
 
-  <span class="align-middle">
+  <!-- <span class="align-middle">
     <img [src]="product.imagepath" alt="{{ product.title }}" class="img-fluid" />
+  </span> -->
+
+  <!-- for custom pipe  -->
+  <span class="align-middle">
+    <img [src]="product.imagepath | defimg: 'https://media.wired.com/photos/5f2b2e792f0075bf6e0a1de6/2:3/w_1200,h_1800,c_limit/Gear-Sony-WH-1000XM4-1-SOURCE-Sony.jpg' " alt="{{ product.title }}" class="img-fluid" />
   </span>
 
   <hr>
+
+  <div>
+    <p> {{20000 | currency: 'INR' : 'symbol'}} </p>
+  </div>
 
   <div>
     <button (click) = 'onEdit()'> Edit </button>

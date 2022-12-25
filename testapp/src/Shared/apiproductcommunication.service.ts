@@ -21,7 +21,7 @@ export class ApiproductcommunicationService {
   }
 
   // add/post
-  addProduct(title: string, description: string, imagepath: string, quantity: number): Observable<Product> {
+  addProduct(title: string, description: string, imagepath: string = null, quantity: number): Observable<Product> {
     const product = {
       title: title,
       description: description,

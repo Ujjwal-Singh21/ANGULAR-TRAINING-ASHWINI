@@ -37,6 +37,15 @@
             <a class="nav-link" routerLink = 'logout'>LogOut</a>
           </li>
 
+          
+          <li class="nav-item">
+            <a class="nav-link" > {{statictime}} </a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link" > {{ runningtime | async }} </a>
+          </li>
+
         </ul>
 
       </div>
